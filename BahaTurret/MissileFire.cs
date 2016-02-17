@@ -3546,6 +3546,14 @@ namespace BahaTurret
 								}
 								return 1;
 							}
+                            else if (weapon.isOverheated)
+                            {
+                                if (BDArmorySettings.DRAW_DEBUG_LABELS)
+                                {
+                                    Debug.Log(selectedWeapon + " is overheated!");
+                                }
+                                return -1;
+                            }
 							else
 							{
 								if(BDArmorySettings.DRAW_DEBUG_LABELS)
