@@ -3543,7 +3543,15 @@ namespace BahaTurret
 						float gimbalTolerance = vessel.LandedOrSplashed ? 0 : 15;
 						if(((!vessel.LandedOrSplashed && pilotAI) || (TargetInTurretRange(weapon.turret, gimbalTolerance))) && weapon.maxEffectiveDistance >= finalDistance)
 						{
-							if(CheckAmmo(weapon) || BDArmorySettings.INFINITE_AMMO)
+                            if (weapon.isOverheated)
+                            {
+                                if (BDArmorySettings.DRAW_DEBUG_LABELS)
+                                {
+                                    Debug.Log(selectedWeapon + " is overheated!");
+                                }
+                                return -1;
+                            } 
+                            else if (CheckAmmo(weapon) || BDArmorySettings.INFINITE_AMMO)
 							{
 								if(BDArmorySettings.DRAW_DEBUG_LABELS)
 								{
@@ -3551,14 +3559,6 @@ namespace BahaTurret
 								}
 								return 1;
 							}
-                            else if (weapon.isOverheated)
-                            {
-                                if (BDArmorySettings.DRAW_DEBUG_LABELS)
-                                {
-                                    Debug.Log(selectedWeapon + " is overheated!");
-                                }
-                                return -1;
-                            }
 							else
 							{
 								if(BDArmorySettings.DRAW_DEBUG_LABELS)
