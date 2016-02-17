@@ -2124,77 +2124,82 @@ namespace BahaTurret
 			//scan and acquire new target
 			if(Time.time-targetScanTimer > targetScanInterval)
 			{
-				targetScanTimer = Time.time;
-
-				if(!guardFiringMissile)
-				{
-					SetTarget(null);
-					if(BDArmorySettings.ALLOW_LEGACY_TARGETING)
-					{
-						ScanAllTargets();
-					}
-
-					SmartFindTarget();
-
-					if(guardTarget == null || selectedWeapon == null)
-					{
-						SetCargoBays();
-						return;
-					}
-
-					//firing
-					if(weaponIndex > 0)
-					{
-						if(selectedWeapon.GetWeaponClass() == WeaponClasses.Missile)
-						{
-							bool launchAuthorized = true;
-							bool pilotAuthorized = true;//(!pilotAI || pilotAI.GetLaunchAuthorization(guardTarget, this));
-
-							float targetAngle = Vector3.Angle(-transform.forward, guardTarget.transform.position - transform.position);
-							float targetDistance = Vector3.Distance(currentTarget.position, transform.position);
-							if(targetAngle > guardAngle / 2) //dont fire yet if target out of guard angle
-							{
-								launchAuthorized = false;
-							}
-							else if((vessel.LandedOrSplashed || guardTarget.LandedOrSplashed) && targetDistance < 1000)  //fire the missile only if target is further than 1000m
-							{
-								launchAuthorized = false;
-							}
-							else if(!vessel.LandedOrSplashed && !guardTarget.LandedOrSplashed && targetDistance < 400) //if air2air only fire if futher than 400m
-							{
-								launchAuthorized = false;
-							}
-
-							if(missilesAway < maxMissilesOnTarget)
-							{
-								if(!guardFiringMissile && launchAuthorized && (pilotAuthorized || !BDArmorySettings.ALLOW_LEGACY_TARGETING))
-								{
-									StartCoroutine(GuardMissileRoutine());
-								}
-							}
-
-							if(!launchAuthorized || !pilotAuthorized || missilesAway >= maxMissilesOnTarget)
-							{
-								targetScanTimer -= 0.5f * targetScanInterval;
-							}
-						}
-						else if(selectedWeapon.GetWeaponClass() == WeaponClasses.Bomb)
-						{
-
-							if(!guardFiringMissile)
-							{
-								StartCoroutine(GuardBombRoutine());
-							}
-						}
-						else if(selectedWeapon.GetWeaponClass() == WeaponClasses.Gun || selectedWeapon.GetWeaponClass() == WeaponClasses.Rocket || selectedWeapon.GetWeaponClass() == WeaponClasses.DefenseLaser)
-						{
-							StartCoroutine(GuardTurretRoutine());
-						}
-					}
-				}
-				SetCargoBays();
+                BeginTargetScanAndWeaponSelect();
 			}
 		}
+
+        public void BeginTargetScanAndWeaponSelect()
+        {
+            targetScanTimer = Time.time;
+
+            if (!guardFiringMissile)
+            {
+                SetTarget(null);
+                if (BDArmorySettings.ALLOW_LEGACY_TARGETING)
+                {
+                    ScanAllTargets();
+                }
+
+                SmartFindTarget();
+
+                if (guardTarget == null || selectedWeapon == null)
+                {
+                    SetCargoBays();
+                    return;
+                }
+
+                //firing
+                if (weaponIndex > 0)
+                {
+                    if (selectedWeapon.GetWeaponClass() == WeaponClasses.Missile)
+                    {
+                        bool launchAuthorized = true;
+                        bool pilotAuthorized = true;//(!pilotAI || pilotAI.GetLaunchAuthorization(guardTarget, this));
+
+                        float targetAngle = Vector3.Angle(-transform.forward, guardTarget.transform.position - transform.position);
+                        float targetDistance = Vector3.Distance(currentTarget.position, transform.position);
+                        if (targetAngle > guardAngle / 2) //dont fire yet if target out of guard angle
+                        {
+                            launchAuthorized = false;
+                        }
+                        else if ((vessel.LandedOrSplashed || guardTarget.LandedOrSplashed) && targetDistance < 1000)  //fire the missile only if target is further than 1000m
+                        {
+                            launchAuthorized = false;
+                        }
+                        else if (!vessel.LandedOrSplashed && !guardTarget.LandedOrSplashed && targetDistance < 400) //if air2air only fire if futher than 400m
+                        {
+                            launchAuthorized = false;
+                        }
+
+                        if (missilesAway < maxMissilesOnTarget)
+                        {
+                            if (!guardFiringMissile && launchAuthorized && (pilotAuthorized || !BDArmorySettings.ALLOW_LEGACY_TARGETING))
+                            {
+                                StartCoroutine(GuardMissileRoutine());
+                            }
+                        }
+
+                        if (!launchAuthorized || !pilotAuthorized || missilesAway >= maxMissilesOnTarget)
+                        {
+                            targetScanTimer -= 0.5f * targetScanInterval;
+                        }
+                    }
+                    else if (selectedWeapon.GetWeaponClass() == WeaponClasses.Bomb)
+                    {
+
+                        if (!guardFiringMissile)
+                        {
+                            StartCoroutine(GuardBombRoutine());
+                        }
+                    }
+                    else if (selectedWeapon.GetWeaponClass() == WeaponClasses.Gun || selectedWeapon.GetWeaponClass() == WeaponClasses.Rocket || selectedWeapon.GetWeaponClass() == WeaponClasses.DefenseLaser)
+                    {
+                        StartCoroutine(GuardTurretRoutine());
+                    }
+                }
+            }
+            SetCargoBays();
+        }
 
 		Vector3 debugGuardViewDirection;
 		bool focusingOnTarget = false;
