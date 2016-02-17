@@ -1474,7 +1474,7 @@ namespace BahaTurret
 				wasFiring = false;
 				audioSource2.PlayOneShot(overheatSound);
 
-                weaponManager.BeginTargetScanAndWeaponSelect();     //force this to ensure that if the guns overheat a new weapon is chosen
+                weaponManager.ForceScanAndTargetUpdate();     //force this to ensure that if the guns overheat a new weapon is chosen
 			}
 			if(heat < maxHeat/3 && isOverheated) //reset on cooldown
 			{

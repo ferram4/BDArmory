@@ -2128,7 +2128,7 @@ namespace BahaTurret
 			}
 		}
 
-        public void BeginTargetScanAndWeaponSelect()
+        void BeginTargetScanAndWeaponSelect()
         {
             targetScanTimer = Time.time;
 
@@ -2199,6 +2199,11 @@ namespace BahaTurret
                 }
             }
             SetCargoBays();
+        }
+
+        public void ForceScanAndTargetUpdate()
+        {
+            targetScanTimer = targetScanInterval;
         }
 
 		Vector3 debugGuardViewDirection;
